@@ -778,6 +778,13 @@ footer {
     --particle-color: #1877f2;
 }
 
+.vsco {
+    --color1: #ffffff;
+    --color2: #111111;
+    --shadow-color: rgba(255, 255, 255, 0.45);
+    --particle-color: #ffffff;
+}
+
 /* Efecto de luz al hover */
 .glow-effect {
     position: absolute;

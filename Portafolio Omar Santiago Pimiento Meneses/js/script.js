@@ -2,6 +2,7 @@
 let currentRating = 0;
 let totalReviews = 0;
 let totalStars = 0;
+const ratingsStorageKey = 'portfolioRatings';
 
 const ratingTexts = {
     1: 'Muy malo',
@@ -31,6 +32,34 @@ const ratingText = document.getElementById('ratingText');
 const ratingDisplay = document.getElementById('ratingDisplay');
 const selectedRatingSpan = document.getElementById('selectedRating');
 const submitBtn = document.getElementById('submitBtn');
+
+function loadSavedRatings() {
+    const savedRatings = localStorage.getItem(ratingsStorageKey);
+
+    if (savedRatings) {
+        const ratingsData = JSON.parse(savedRatings);
+        totalReviews = ratingsData.totalReviews || 0;
+        totalStars = ratingsData.totalStars || 0;
+    }
+
+    updateStats();
+}
+
+function saveRatings() {
+    localStorage.setItem(ratingsStorageKey, JSON.stringify({
+        totalReviews,
+        totalStars
+    }));
+}
+
+function updateStats() {
+    const avgRating = totalReviews > 0 ? (totalStars / totalReviews).toFixed(1) : '0.0';
+    const satisfaction = totalReviews > 0 ? Math.round((totalStars / (totalReviews * 5)) * 100) : 0;
+
+    document.getElementById('avgRating').textContent = avgRating;
+    document.getElementById('totalReviews').textContent = totalReviews;
+    document.getElementById('satisfaction').textContent = satisfaction + '%';
+}
 
 stars.forEach(star => {
     star.addEventListener('click', () => {
@@ -94,14 +123,8 @@ submitBtn.addEventListener('click', () => {
     if (currentRating > 0) {
         totalReviews++;
         totalStars += currentRating;
-
-        // Actualizar estadísticas
-        const avgRating = (totalStars / totalReviews).toFixed(1);
-        const satisfaction = Math.round((totalStars / (totalReviews * 5)) * 100);
-
-        document.getElementById('avgRating').textContent = avgRating;
-        document.getElementById('totalReviews').textContent = totalReviews;
-        document.getElementById('satisfaction').textContent = satisfaction + '%';
+        saveRatings();
+        updateStats();
 
         // Mostrar confirmación
         submitBtn.textContent = '✓ ¡Gracias por tu calificación!';
@@ -118,3 +141,5 @@ submitBtn.addEventListener('click', () => {
         }, 2000);
     }
 });
+
+loadSavedRatings();
